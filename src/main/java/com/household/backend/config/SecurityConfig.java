@@ -18,15 +18,14 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-  @Value("${app.cors.allowed-origins}")
-  private String allowedOrigin;
+  @Value("#{'${app.cors.allowed-origins}'.split(',')}")
+  private List<String> allowedOrigins;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .anyRequest().permitAll()
@@ -40,7 +39,7 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOrigins(List.of(allowedOrigin)); // local/prod에서 값만 바뀜
+    config.setAllowedOrigins(allowedOrigins);
     config.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
     config.setAllowedHeaders(List.of("*"));
     config.setExposedHeaders(List.of("Set-Cookie"));
