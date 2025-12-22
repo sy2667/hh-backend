@@ -18,7 +18,7 @@ public interface TransactionService {
     Optional<Transaction> findById(Integer transactionPk);
 
     // 사용자의 모든 거래내역 조회
-    List<TransactionRes> findByUser(Integer userPk, Sort sort);
+    List<TransactionRes> findByUser(Integer userPk, String to, String end, Sort sort);
 
     // 사용자의 특정 타입 거래내역 조회 (수입 또는 지출)
     List<Transaction> findByUserAndType(Integer userPk, String transactionType, Sort sort);

@@ -30,7 +30,7 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<TransactionListRes> getTransactions(HttpSession session, @RequestParam(defaultValue = "date") String sortBy, @RequestParam(defaultValue = "DESC") Sort.Direction order) {
+    public ResponseEntity<TransactionListRes> getTransaction(HttpSession session, @RequestParam String to, @RequestParam String end, @RequestParam(defaultValue = "date") String sortBy, @RequestParam(defaultValue = "DESC") Sort.Direction order) {
         Integer userPk = SessionUtils.getLoginUserPk(session);
 
         String sortProperty;
@@ -42,11 +42,12 @@ public class TransactionController {
 
         Sort sort = Sort.by(order, sortProperty);
 
-        List<TransactionRes> txList = transactionService.findByUser(userPk, sort);
+        List<TransactionRes> txList = transactionService.findByUser(userPk, to, end, sort);
         TransactionListRes res = TransactionListRes.from(txList);
 
         return ResponseEntity.ok(res);
     }
+
 
     @DeleteMapping("/{transactionPk}")
     public ResponseEntity<Void> delete(@PathVariable Integer transactionPk, HttpSession session) {

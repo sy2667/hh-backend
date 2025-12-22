@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,8 +15,7 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
 
     // 사용자 거래내역 조회
-    @Query("SELECT t FROM Transaction t WHERE t.user.userPk = :userPk ")
-    List<Transaction> findByUser(@Param("userPk") Integer userPk, Sort sort);
+    List<Transaction> findByUser_UserPkAndTransactionDateBetween(Integer userPk, LocalDateTime start, LocalDateTime end, Sort sort);
 
     // 특정 사용자의 특정 타입 거래내역 조회 (수입 또는 지출)
     @Query("SELECT t FROM Transaction t WHERE t.user.userPk = :userPk AND t.transactionType = :type")

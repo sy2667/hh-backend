@@ -14,7 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +52,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionRes> findByUser(Integer userPk, Sort sort) {
-        return transactionRepository.findByUser(userPk, sort)
+    public List<TransactionRes> findByUser(Integer userPk, String to, String end, Sort sort) {
+        LocalDate toDate = LocalDate.parse(to);
+        LocalDate endDate = LocalDate.parse(end);
+
+        LocalDateTime startDt = toDate.atStartOfDay();
+        LocalDateTime endDt   = endDate.atTime(LocalTime.MAX);
+
+        return transactionRepository.findByUser_UserPkAndTransactionDateBetween(userPk, startDt, endDt, sort)
                 .stream()
                 .map(TransactionRes::from)
                 .toList();
