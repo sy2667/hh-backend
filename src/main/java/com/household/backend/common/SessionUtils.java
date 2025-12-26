@@ -10,6 +10,8 @@ public class SessionUtils {
         if(userPk == null) {
             throw new RuntimeException("로그인이 필요합니다.");
         }
+
+        session.setAttribute(USER_SESSION_KEY, userPk);
         return userPk;
     }
 

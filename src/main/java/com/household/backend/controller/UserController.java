@@ -2,6 +2,7 @@ package com.household.backend.controller;
 
 import com.household.backend.common.SessionUtils;
 import com.household.backend.dto.req.NaverLoginReq;
+import com.household.backend.dto.req.UserJoinCreate;
 import com.household.backend.dto.req.UserLogin;
 import com.household.backend.dto.req.UserUpdate;
 import com.household.backend.dto.res.UserRes;
@@ -21,10 +22,10 @@ public class UserController {
   private final UserService userService;
   private final OauthService oauthService;
 
-  @PostMapping("/login")
-  public ResponseEntity<UserRes> login(@RequestBody UserLogin req, HttpSession session) {
-      User user = userService.loginOrRegister(req);
-      session.setAttribute("USER", user.getUserPk());
+  @PostMapping("/login/loginWithHome")
+  public ResponseEntity<UserRes> loginWithHome(@RequestBody UserLogin req, HttpSession session) {
+      User user = userService.loginWithHome(req);
+    SessionUtils.setLoginUser(session, user.getUserPk());
 
       return ResponseEntity.ok(UserRes.from(user));
   }
@@ -34,6 +35,14 @@ public class UserController {
 
     User user = oauthService.naverLogin(req.getCode(), req.getState());
 
+    SessionUtils.setLoginUser(session, user.getUserPk());
+
+    return ResponseEntity.ok(UserRes.from(user));
+  }
+
+  @PostMapping("/login/joinWithHome")
+  public ResponseEntity<UserRes> joinWithHome(@RequestBody UserJoinCreate req, HttpSession session) {
+    User user = userService.joinWithHome(req);
     SessionUtils.setLoginUser(session, user.getUserPk());
 
     return ResponseEntity.ok(UserRes.from(user));

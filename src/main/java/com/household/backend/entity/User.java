@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 
@@ -27,10 +25,13 @@ public class User {
   @Column(name = "email", length = 100)
   private String email;
 
-  @Column(name = "provider", nullable = false, length = 20)
+  @Column(name = "password", length = 100)
+  private String password;
+
+  @Column(name = "provider", length = 20)
   private String provider;
 
-  @Column(name = "provider_id", nullable = false, length = 255)
+  @Column(name = "provider_id", length = 255)
   private String providerId;
 
   @Column(name = "created_at", updatable = false)
@@ -42,10 +43,14 @@ public class User {
   @Column(name = "deleted_at")
   private LocalDateTime deletedAt;
 
+  @Column(name = "login_at")
+  private LocalDateTime loginAt;
+
   @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();
     updatedAt = LocalDateTime.now();
+    loginAt = LocalDateTime.now();
   }
 
   @PreUpdate

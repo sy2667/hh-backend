@@ -1,14 +1,18 @@
 package com.household.backend.service.impl;
 
+import com.household.backend.dto.req.UserJoinCreate;
 import com.household.backend.dto.req.UserLogin;
 import com.household.backend.dto.req.UserUpdate;
 import com.household.backend.entity.User;
 import com.household.backend.repository.UserRepository;
 import com.household.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -17,26 +21,20 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public User loginOrRegister(UserLogin req) {
-        Optional<User> exUser = userRepository.findByProvider(
-                req.getProvider(),
-                req.getProviderId()
-        );
+    public User loginWithHome(UserLogin req) {
 
-        if(exUser.isPresent()) {
-            return exUser.get();
-        } else {
-            User newUser = new User();
-            newUser.setProvider(req.getProvider());
-            newUser.setProviderId(req.getProviderId());
-            newUser.setEmail(req.getEmail());
-            newUser.setNickName(req.getNickName());
+        User user = userRepository.findByEmailAndDeletedAtIsNull(req.getEmail()).orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다."));
 
-            return userRepository.save(newUser);
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
+
+        return user;
+
     }
 
     @Override
@@ -66,6 +64,26 @@ public class UserServiceImpl implements UserService {
 
         user.withdraw();
         userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User joinWithHome(UserJoinCreate req) {
+        if (userRepository.existsByEmail(req.getEmail())) {
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
+        try {
+            User user = new User();
+            user.setEmail(req.getEmail());
+            user.setNickName(req.getNickname());
+            user.setPassword(passwordEncoder.encode(req.getPassword()));
+            user.setProvider("HOME");
+
+          return userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
+
     }
 
 }

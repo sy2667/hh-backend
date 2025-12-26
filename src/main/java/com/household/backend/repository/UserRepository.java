@@ -22,5 +22,9 @@ public interface UserRepository extends JpaRepository<User,Integer> {
 
     @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.provider = :provider AND u.providerId = :providerId")
     boolean existsProvider(@Param("provider") String provider, @Param("providerId") String providerId);
+
+    boolean existsByEmail(String email);
+
+    Optional<User> findByEmailAndDeletedAtIsNull(String email);
 }
 

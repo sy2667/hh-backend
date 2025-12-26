@@ -12,6 +12,7 @@ public class UserRes {
     private Integer userPk;
     private String nickName;
     private String email;
+    private String password;
     private String provider;
     private LocalDateTime createAt;
 
@@ -20,6 +21,7 @@ public class UserRes {
                 .userPk(user.getUserPk())
                 .nickName(user.getNickName())
                 .email(user.getEmail())
+                .password(user.getPassword())
                 .provider(user.getProvider())
                 .createAt(user.getCreatedAt())
                 .build();

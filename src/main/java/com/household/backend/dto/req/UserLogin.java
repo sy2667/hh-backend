@@ -6,8 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserLogin {
-    private String provider;
-    private String providerId;
     private String email;
+    private String password;
     private String nickName;
 }
