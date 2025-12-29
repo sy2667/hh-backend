@@ -1,8 +1,10 @@
 package com.household.backend.dto.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -12,5 +14,7 @@ public class TransactionCreate {
     private String transactionType;
     private Long amount;
     private String description;
-    private LocalDateTime transactionDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate transactionDate;
 }

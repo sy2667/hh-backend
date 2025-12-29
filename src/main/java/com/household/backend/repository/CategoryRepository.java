@@ -15,7 +15,7 @@ public interface CategoryRepository extends JpaRepository<Category,Integer> {
     List<Category> findByUser(@Param("userPk") Integer userPk);
 
     @Query("SELECT c FROM Category c WHERE c.user.userPk = :userPk AND c.categoryType = :type ORDER BY c.createdAt DESC")
-    List<Category> findByUserAndType(Integer userPk, String categoryType);
+    List<Category> findByUserAndType(@Param("userPk") Integer userPk, @Param("type") String categoryType);
 
 
 }

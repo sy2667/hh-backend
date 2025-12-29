@@ -28,7 +28,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryRes>> listMyCategory(HttpSession session) {
+    public ResponseEntity<List<CategoryRes>> listMyCategory(@RequestBody  HttpSession session) {
         Integer userPk = SessionUtils.getLoginUserPk(session);
 
         List<CategoryRes> list = categoryService.findByUser(userPk);
