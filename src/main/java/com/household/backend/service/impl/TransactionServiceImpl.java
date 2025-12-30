@@ -47,11 +47,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Optional<Transaction> findById(Integer transactionPk) {
-        return transactionRepository.findById(transactionPk);
-    }
-
-    @Override
     public List<TransactionRes> findByUser(Integer userPk, String to, String end, Sort sort) {
         LocalDate toDate = LocalDate.parse(to);
         LocalDate endDate = LocalDate.parse(end);
@@ -87,25 +82,24 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public Transaction updateTransaction(Integer transactionPk, Integer categoryPk, Long amount,
-                                         String description, LocalDateTime transactionDate) {
+    public Transaction updateTransaction(Integer transactionPk, TransactionCreate req) {
         Transaction transaction = transactionRepository.findById(transactionPk).orElseThrow(() -> new RuntimeException("거래내역을 찾을 수 없습니다."));
 
-        if (categoryPk != null) {
-            Category category = categoryRepository.findById(categoryPk).orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
+        if (req.getCategoryPk() != null) {
+            Category category = categoryRepository.findById(req.getCategoryPk()).orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
             transaction.setCategory(category);
         }
 
-        if (amount != null) {
-            transaction.setAmount(amount);
+        if (req.getAmount() != null) {
+            transaction.setAmount(req.getAmount());
         }
 
-        if (description != null) {
-            transaction.setDescription(description);
+        if (req.getDescription() != null) {
+            transaction.setDescription(req.getDescription());
         }
 
-        if (transactionDate != null) {
-            transaction.setTransactionDate(transactionDate);
+        if (req.getTransactionDate() != null) {
+            transaction.setTransactionDate(req.getTransactionDate().atStartOfDay());
         }
 
         return transactionRepository.save(transaction);
@@ -129,6 +123,13 @@ public class TransactionServiceImpl implements TransactionService {
     public Long sumAmountByPeriod(Integer userPk, String transactionType, LocalDateTime startDate, LocalDateTime endDate) {
         Long sum = transactionRepository.sumAmountByPeriod(userPk, transactionType, startDate, endDate);
         return sum != null ? sum : 0L;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Transaction findById(Integer transactionPk) {
+        return transactionRepository.findById(transactionPk)
+            .orElseThrow(() -> new RuntimeException("거래 내역을 찾을 수 없습니다."));
     }
 
 }

@@ -15,7 +15,7 @@ public interface TransactionService {
     Transaction createTransaction(Integer userPk, TransactionCreate tx);
 
     // 거래내역 조회 (ID로)
-    Optional<Transaction> findById(Integer transactionPk);
+    Transaction findById(Integer transactionPk);
 
     // 사용자의 모든 거래내역 조회
     List<TransactionRes> findByUser(Integer userPk, String to, String end, Sort sort);
@@ -33,8 +33,7 @@ public interface TransactionService {
     List<Transaction> findByMonth(Integer userPk, int year, int month, Sort sort);
 
     // 거래내역 수정
-    Transaction updateTransaction(Integer transactionPk, Integer categoryPk, Long amount,
-                                  String description, LocalDateTime transactionDate);
+    Transaction updateTransaction(Integer transactionPk, TransactionCreate req);
 
     // 거래내역 삭제
     void deleteTransaction(Integer transactionPk);

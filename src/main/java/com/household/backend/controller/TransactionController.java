@@ -48,6 +48,24 @@ public class TransactionController {
         return ResponseEntity.ok(res);
     }
 
+    @GetMapping("/{transactionPk}")
+    public ResponseEntity<TransactionRes> getPkToTransaction(@PathVariable Integer transactionPk, HttpSession session) {
+        SessionUtils.getLoginUserPk(session);
+        Transaction tx = transactionService.findById(transactionPk);
+
+        TransactionRes res = TransactionRes.from(tx);
+
+        return ResponseEntity.ok(res);
+    }
+
+    @PutMapping("/{transactionPk}")
+    public ResponseEntity<TransactionRes> updateTransaction(@PathVariable Integer transactionPk, @RequestBody TransactionCreate req, HttpSession session) {
+        SessionUtils.getLoginUserPk(session);
+        Transaction tx = transactionService.updateTransaction(transactionPk, req);
+        TransactionRes res = TransactionRes.from(tx);
+
+        return ResponseEntity.ok(res);
+    }
 
     @DeleteMapping("/{transactionPk}")
     public ResponseEntity<Void> delete(@PathVariable Integer transactionPk, HttpSession session) {
