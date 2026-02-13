@@ -17,27 +17,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     // 사용자 거래내역 조회
     List<Transaction> findByUser_UserPkAndTransactionDateBetween(Integer userPk, LocalDateTime start, LocalDateTime end, Sort sort);
 
-    // 특정 사용자의 특정 타입 거래내역 조회 (수입 또는 지출)
-    @Query("SELECT t FROM Transaction t WHERE t.user.userPk = :userPk AND t.transactionType = :type")
-    List<Transaction> findByUserAndType(@Param("userPk") Integer userPk, @Param("type") String transactionType, Sort sort);
+    // 사용자 연별 거래내역 조회
+    List<Transaction> findByUserUserPkAndTransactionDateBetween(Integer userPk,LocalDateTime start, LocalDateTime end);
 
-    // 특정 사용자의 특정 카테고리 거래내역 조회
-    @Query("SELECT t FROM Transaction t WHERE t.user.userPk = :userPk AND t.category.categoryPk = :categoryPk")
-    List<Transaction> findByUserAndCategory(@Param("userPk") Integer userPk, @Param("categoryPk") Integer categoryPk, Sort sort);
-
-    // 특정 기간 거래내역 조회
-    @Query("SELECT t FROM Transaction t WHERE t.user.userPk = :userPk AND t.transactionDate BETWEEN :start AND :end")
-    List<Transaction> findByPeriod(@Param("userPk") Integer userPk, @Param("start") LocalDateTime startDate, @Param("end") LocalDateTime endDate, Sort sort);
-
-    // 특정 사용자의 특정 월 거래내역 조회
-    @Query("SELECT t FROM Transaction t WHERE t.user.userPk = :userPk AND YEAR(t.transactionDate) = :year AND MONTH(t.transactionDate) = :month")
-    List<Transaction> findByMonth(@Param("userPk") Integer userPk, @Param("year") int year, @Param("month") int month, Sort sort);
-
-    // 특정 사용자의 총 수입 계산
-    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.user.userPk = :userPk AND t.transactionType = :type")
-    Long sumAmount(@Param("userPk") Integer userPk, @Param("type") String transactionType);
-
-    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.user.userPk = :userPk AND t.transactionType = :type AND t.transactionDate BETWEEN :start AND :end")
-    Long sumAmountByPeriod(@Param("userPk") Integer userPk, @Param("type") String transactionType, @Param("start") LocalDateTime startDate, @Param("end") LocalDateTime endDate);
-
+    // 사용자 연별 거래내역 차트 조회
+    List<Transaction> findByUserUserPkAndTransactionDateBetweenAndTransactionType(Integer userPk, LocalDateTime start, LocalDateTime end, String transactionType);
 }
